@@ -14,6 +14,9 @@ last edited: September 2011
 
 import sys
 from PyQt4 import QtGui, QtCore
+import os
+from os import listdir
+import random
 
 class Reader(QtGui.QWidget):
     def __init__(self):
@@ -22,18 +25,17 @@ class Reader(QtGui.QWidget):
         self.initUI()
         
     def initUI(self):      
-
+        self.listDir = os.listdir()
+        self.curPic = 1;
+    
         hbox = QtGui.QHBoxLayout(self)
-        hbox.setMargin(0)
-        
-        
-        self.pixmap = QtGui.QPixmap("115-m-o-t-h-e-r.jpg")
+        hbox.setMargin(0)     
 
-        lbl = QtGui.QLabel(self)
-        lbl.setPixmap(self.pixmap)
+        self.lbl = QtGui.QLabel(self)
+        self.setNextPic()
         
         scrollArea = QtGui.QScrollArea(self)
-        scrollArea.setWidget(lbl)
+        scrollArea.setWidget(self.lbl)
         scrollArea.setAlignment(QtCore.Qt.AlignHCenter)
         scrollArea.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
         self.scrollHt = 1
@@ -66,8 +68,18 @@ class Reader(QtGui.QWidget):
             #animation.start();
             self.vbar.setValue(self.scrollHt)
 
+    def setNextPic(self):
+        rnd = random.randrange(0,len(self.listDir))
+        self.pixmap = QtGui.QPixmap(self.listDir[rnd])
+        self.lbl.setPixmap(self.pixmap)
+        self.scrollHt = 0
+        
     def mousePressEvent(self, event):
-        self.scroll()
+        if event.button() == QtCore.Qt.RightButton:
+            self.setNextPic()
+            
+        else:
+            self.scroll()
 
         
 def main():
