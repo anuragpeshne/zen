@@ -30,20 +30,17 @@ class Reader(QtGui.QWidget):
     
         hbox = QtGui.QHBoxLayout(self)
         hbox.setMargin(0)     
+        
+        self.scrollArea = QtGui.QScrollArea(self)
+        self.scrollArea.setAlignment(QtCore.Qt.AlignHCenter)
+        self.scrollArea.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
 
-        self.lbl = QtGui.QLabel(self)
         self.setNextPic()
         
-        scrollArea = QtGui.QScrollArea(self)
-        scrollArea.setWidget(self.lbl)
-        scrollArea.setAlignment(QtCore.Qt.AlignHCenter)
-        scrollArea.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
-        self.scrollHt = 1
-        
-        self.vbar = scrollArea.verticalScrollBar()
-        print(scrollArea.height())
+        self.vbar = self.scrollArea.verticalScrollBar()
+        print(self.scrollArea.height())
 
-        hbox.addWidget(scrollArea)
+        hbox.addWidget(self.scrollArea)
         self.setLayout(hbox)
         
         self.showMaximized()
@@ -52,7 +49,7 @@ class Reader(QtGui.QWidget):
 
     def scroll(self):
         ht = self.height()
-        self.scrollHt = self.scrollHt + ht/2
+        self.scrollHt = self.scrollHt + ht/3
         print(self.vbar.value())
         print(self.height())
         print(self.pixmap.height())
@@ -69,9 +66,15 @@ class Reader(QtGui.QWidget):
             self.vbar.setValue(self.scrollHt)
 
     def setNextPic(self):
-        rnd = random.randrange(0,len(self.listDir))
-        self.pixmap = QtGui.QPixmap(self.listDir[rnd])
+        while True:
+            rnd = random.randrange(0,len(self.listDir))
+            tempFileName = self.listDir[rnd]
+            if tempFileName[-3:] != ".py":
+                self.pixmap = QtGui.QPixmap(self.listDir[rnd])
+                break
+        self.lbl = QtGui.QLabel(self)
         self.lbl.setPixmap(self.pixmap)
+        self.scrollArea.setWidget(self.lbl)
         self.scrollHt = 0
         
     def mousePressEvent(self, event):
@@ -80,6 +83,10 @@ class Reader(QtGui.QWidget):
             
         else:
             self.scroll()
+
+    def keyPressEvent(self, event):
+         if event.key() == QtCore.Qt.Key_Escape:
+            self.close()
 
         
 def main():
