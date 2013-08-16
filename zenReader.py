@@ -13,8 +13,9 @@ class Reader(QtGui.QWidget):
         self.setWindowFlags(QtCore.Qt.FramelessWindowHint)
         self.initUI()
         
-    def initUI(self):      
-        self.listDir = os.listdir()
+    def initUI(self):
+        self.zenImgDir = "d:\\zenWorks\\img\\"
+        self.listDir = os.listdir(self.zenImgDir)
         self.curPic = 1;
     
         hbox = QtGui.QHBoxLayout(self)
@@ -27,7 +28,6 @@ class Reader(QtGui.QWidget):
         self.setNextPic()
         
         self.vbar = self.scrollArea.verticalScrollBar()
-        print(self.scrollArea.height())
 
         hbox.addWidget(self.scrollArea)
         self.setLayout(hbox)
@@ -39,12 +39,10 @@ class Reader(QtGui.QWidget):
     def scroll(self):
         ht = self.height()
         self.scrollHt = self.scrollHt + ht/3
-        print(self.vbar.value())
-        print(self.height())
-        print(self.pixmap.height())
         if(self.vbar.value() + self.height() >= self.pixmap.height()):
-            self.vbar.setValue(0)
-            self.scrollHt = 0
+            self.setNextPic()
+            #self.vbar.setValue(0)
+            #self.scrollHt = 0
         else:
             #animation = QtCore.QPropertyAnimation(self.scrollArea, "geometry");
             #animation.setDuration(10000);
@@ -57,9 +55,10 @@ class Reader(QtGui.QWidget):
     def setNextPic(self):
         while True:
             rnd = random.randrange(0,len(self.listDir))
-            tempFileName = self.listDir[rnd]
+            tempFileName =  self.listDir[rnd]
             if tempFileName[-3:] != ".py":
-                self.pixmap = QtGui.QPixmap(self.listDir[rnd])
+                print(self.zenImgDir + self.listDir[rnd])
+                self.pixmap = QtGui.QPixmap(self.zenImgDir + self.listDir[rnd])
                 break
         self.lbl = QtGui.QLabel(self)
         self.lbl.setPixmap(self.pixmap)
@@ -74,8 +73,14 @@ class Reader(QtGui.QWidget):
             self.scroll()
 
     def keyPressEvent(self, event):
-         if event.key() == QtCore.Qt.Key_Escape:
+        print(event.key())
+        #print(QtCore.Qt.Key_Right)
+        if event.key() == QtCore.Qt.Key_Escape:
             self.close()
+        elif event.key() == QtCore.Qt.Key_Space:
+            self.scroll()
+        elif event.key() == QtCore.Qt.Key_Right:
+            self.setNextPic()
 
         
 def main():
