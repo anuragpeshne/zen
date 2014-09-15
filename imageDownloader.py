@@ -6,11 +6,11 @@ from os import listdir
 from os.path import expanduser
 
 userHome = expanduser("~")
-print(userHome)
-zenDir = userHome + "/zenWorks/img/"
+zenDir = userHome + "/Documents/zenWorks/img/"
+print("saving images at "+zenDir)
 localImgs = os.listdir(zenDir)
-print(localImgs)
-req = urllib.request.Request("http://zenpencils.com", headers={'User-Agent':'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:17.0) Gecko/20100101 Firefox/17.0'})
+#print(localImgs)
+req = urllib.request.Request("http://zenpencils.com", headers={'User-Agent':'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/32.0.1664.3 Safari/537.36'})
 page = urllib.request.urlopen(req)
 print("connected")
 webpage = page.read()
@@ -20,11 +20,13 @@ for link in links:
     actualLink = link[1]
     if(actualLink != ''):
         print("parsing " + actualLink + "\n")
-        imgPageReq = urllib.request.Request(actualLink, headers={'User-Agent':'Mozilla/5.0'})
+        imgPageReq = urllib.request.Request(actualLink, headers={'User-Agent':'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/32.0.1664.3 Safari/537.36'})
         imgPage = urllib.request.urlopen(imgPageReq).read()
         imgPageStr = imgPage.decode(encoding = 'UTF-8')
-        imgLinks = re.findall('(<div id="comic-1" class="comicpane"><img src=")(.*?)"',imgPageStr)
+        imgLinks = re.findall('(<div id="comic">[\s\n]*<img src=")(.*?)"',imgPageStr)
+        print(imgLinks)
         for imgLink in imgLinks:
+                        print(imgLink)
                         actualImgLink = imgLink[1]
                         explodedPgLink = actualLink.split('/')
                         name = explodedPgLink[4] + '.' +actualImgLink[-3:]
@@ -33,6 +35,6 @@ for link in links:
                         else:
                                 print("\tsaving " + name + "\n")
                                 imgReq = urllib.request.Request(actualImgLink, headers={'User-Agent':'Mozilla/5.0'})
-                                local_file = open(zenDir + "img\\" + name, "wb")
+                                local_file = open(zenDir + name, "wb")
                                 local_file.write(urllib.request.urlopen(imgReq).read())
                                 local_file.close()
