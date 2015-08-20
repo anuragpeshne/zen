@@ -24,9 +24,7 @@ for link in links:
         imgPage = urllib.request.urlopen(imgPageReq).read()
         imgPageStr = imgPage.decode(encoding = 'UTF-8')
         imgLinks = re.findall('(<div id="comic">[\s\n]*<img src=")(.*?)"',imgPageStr)
-        print(imgLinks)
         for imgLink in imgLinks:
-                        print(imgLink)
                         actualImgLink = imgLink[1]
                         explodedPgLink = actualLink.split('/')
                         name = explodedPgLink[4] + '.' +actualImgLink[-3:]
